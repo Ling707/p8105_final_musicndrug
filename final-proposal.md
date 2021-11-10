@@ -1,6 +1,7 @@
 p8105 final proposal
 ================
-Ling Guo (lg3158) Wenyi Liu (wl2779) Shebei Xu (sx2267)
+Ling Guo (lg3158) Wenyi Liu (wl2779) Mingkuan Xu (mx2262) Shebei Xu
+(sx2267)
 11/9/2021
 
 <h1>
@@ -19,11 +20,11 @@ The relationship between illicit drug use and billboard music chart
 -   Illicit drug use is a major public health issue in United States.
     Previous studies showed a relationship between illicit drug use and
     pop music
-    \[[1](https://pubmed.ncbi.nlm.nih.gov/30599351/)\],\[[2](https://www.tandfonline.com/doi/full/10.3109/10826084.2012.637433))\],
+    \[[1](https://pubmed.ncbi.nlm.nih.gov/30599351/),[2](https://www.tandfonline.com/doi/full/10.3109/10826084.2012.637433)\],
     indicating that pop music may have a potential encouraging effect on
     illicit drug use \[[3](https://pubmed.ncbi.nlm.nih.gov/18250243/)\].
-    However, these studies are either cross-sectional study, or need to
-    be reproduce using more recent data.
+    However, these studies are either cross-sectional, or need to be
+    reproduce using more recent data.
 
 ## The intended final products
 
