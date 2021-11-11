@@ -1,7 +1,6 @@
 ---
 title: "p8105 final proposal"
 author: "Ling Guo (lg3158) Wenyi Liu (wl2779) Mingkuan Xu (mx2262) Shebei Xu (sx2267)"
-date: "11/9/2021"
 output: github_document
 ---
 
@@ -18,22 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## The intended final products
 
-The intended final products will contain:
+The intended final products will describe the trend of music genre, frequency of illicit drug in the popular music, and the relationship between popular music and illicit drug use.
 
-  - Descriptive information
-    - the trend of music genre
-    - the trend of the frequency of illicit drug in the popular music
-    - the trend of age of first-time illicit drug usage
-    - the trend of prevalence of different illicit drugs
-    
-  - Analysis
-    - the relationship between the trend of music genre and illicit drug description
-    - the relationship between the illicit drug description in music and the first-time illicit drug usage
-    - the relationship between the illicit drug description in music and the prevalences of illicit drug usage
+
 
 ## The anticipated data sources
-
-The data sources are:
 
 - Popular music data: from [Data on Songs from Billboard 1999-2019](https://www.kaggle.com/danield2255/data-on-songs-from-billboard-19992019). The dataset contains the time of release, music genre, peak rank, and lyrics.
 
@@ -41,8 +29,36 @@ The data sources are:
 
 ## The planned analyses/visualizations/coding challenges
 
-pending
+- Planned analyses
+  - Descriptive information
+    - the trend of music genre, the frequency of illicit drug in the popular music
+    - the trend of age of first-time illicit drug usage, prevalence of different illicit drugs
+  - Analysis (methods pending; possibly linear regression)
+    - the relationship between the popularity of music genre and illicit drug popularity
+    - the relationship between the illicit drug description in music and the first-time illicit drug usage
+    - the relationship between the illicit drug description in music and the prevalence of illicit drug usage
+    
+- Visualization
+    - the trends will present as line plots or [sankey plots](https://www.r-graph-gallery.com/sankey-diagram.html); the description of substance reference might use [wordcloud](https://www.r-graph-gallery.com/wordcloud.html).
+    - the relationships will present as scatter plot or [correlogram](https://www.r-graph-gallery.com/correlogram.html).
+    - since there might be a lagging effect in the association between substance reference in lyrics and actual substance use prevalence, line plots may be used.
+    - since state information is available in substance use data set, maps describing the association between music trend and state-stratified illicit drug usage might be present.
+    - Interactivity and animation could be included if necessary.
+    
+- Coding challenges
+  - Data wrangling
+    - Need to narrow down the substances we want to know: need literature review
+    - Extracting substances from the lyrics: substance names varies
+  - Analysis and visualization
+    - Hard to determine the parameters
+    - Only summary data of illicit drug usage is available, might use meta-analysis
+    - Visualization could be coding intensive
 
 ## The planned timeline
 
-pending
+We will meet weekly and have extra meetings if necessary; the planned work would be done by Sunday 11:59 pm.
+
+- __Nov 8 - Nov 14__  Decide project topic and data sources; complete the final proposal (DDL: Nov 13, 1pm); date the data
+- __Nov 15 - Nov 21__ Analysis protocol; data wrangling; report outline; website outline
+- __Nov 22 - Nov 28__ Analysis and data visualization; draft of report; website construction
+- __Nov 29 - Dec 5__ Report revision; website revision; screencast (DDL: Dec 5, 4 pm)
