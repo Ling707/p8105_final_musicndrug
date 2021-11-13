@@ -1,6 +1,6 @@
 p8105 final proposal
 ================
-Ling Guo (lg3158) Wenyi Liu (wl2779) Mingkuan Xu (mx2262) Shebei Xu
+Ling Guo (lg3158) Wenyi Liu (wl2779) Mingkuan Xu (mx2262) Shibei Xu
 (sx2267)
 
 <h1>
