@@ -1,0 +1,19 @@
+---
+title: "Billboard Data Preprocess"
+author: "Mingkuan Xu (mx2262)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library}
+library(tidyverse)
+```
+### Load billboard data
+
+```{r}
+billboard_data = read_csv("./data/BillboardFromLast20/billboardHot100_1999-2019.csv") %>%
+  select(id="...1",Week,Lyrics)
+```
