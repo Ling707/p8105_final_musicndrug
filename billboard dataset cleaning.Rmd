@@ -40,6 +40,16 @@ write.csv(word_bank_genre_raw, file = "./data/word_bank_genre_raw_ling.csv")
 word_bank_raw = read_html("https://www.addictioncenter.com/drugs/drug-street-names/") %>%
   html_table(header = T)
 
+word_bank_raw2 =  read_html("https://www.addictioncenter.com/drugs/drug-alcohol-slang/") %>%
+  html_table(header = F) %>%
+  .[-c(1,2,3)] %>%
+  bind_rows() %>%
+  select(X2) %>%
+  mutate(slang = str_split(str_to_lower(X2), ',')) %>%
+  select(slang) %>%
+  unlist() %>%
+  as_tibble()
+
 word_bank_alcohol = read_html("https://www.addictioncenter.com/drugs/drug-alcohol-slang/") %>%
   html_table(header = F) %>%
   nth(2) %>%
@@ -52,14 +62,14 @@ word_bank_alcohol = read_html("https://www.addictioncenter.com/drugs/drug-alcoho
 write.csv(word_bank_alcohol, file = "./data/alcohol_bank_raw_ling.csv")
 
 drug_bank <- function(raw , var) {
-out = raw %>%
-janitor::clean_names() %>%
-select({{var}}) %>%
-mutate(slang = str_split(str_to_lower({{var}}), ',')) %>%
-select(slang) %>%
-unlist() %>%
-as_tibble()
-return(out)
+  out = raw %>%
+  janitor::clean_names() %>%
+  select({{var}}) %>%
+  mutate(slang = str_split(str_to_lower({{var}}), ',')) %>%
+  select(slang) %>%
+  unlist() %>%
+  as_tibble()
+  return(out)
 }
 
 illicit_names = word_bank_raw[[3]] %>%
@@ -72,8 +82,16 @@ word_bank_opioid = drug_bank(word_bank_raw[[5]], var = street_names)
 word_bank_overcounter = drug_bank(word_bank_raw[[6]], var = street_names)
 word_bank_marijuana = drug_bank(subset(illicit_names, common_name %in% c("Marijuana", "Synthetic Marijuana")), var = other_names)
 word_bank_illicit = drug_bank(subset(illicit_names, !(common_name %in% c("Marijuana", "Synthetic Marijuana"))), var = other_names)
-word_bank_other = bind_rows(word_bank_bdz, word_bank_hallucinogens, word_bank_illicit, word_bank_inhalant, word_bank_opioid, word_bank_overcounter)
-View(word_bank_other)
+word_bank_other = bind_rows(word_bank_bdz, word_bank_hallucinogens, word_bank_illicit, word_bank_inhalant, word_bank_opioid, word_bank_overcounter, word_bank_raw2)
+word_bank_marijuana2 = read_html("https://www.addictioncenter.com/drugs/drug-alcohol-slang/") %>%
+  html_table(header = F) %>%
+  nth(3) %>%
+  select(X2) %>%
+  mutate(slang = str_split(str_to_lower(X2), ',')) %>%
+  unlist() %>%
+  as_tibble()
+word_bank_marijuana = bind_rows(word_bank_marijuana, word_bank_marijuana2)
+
 write_csv(word_bank_other, file = "./data/other_illicit_bank_raw_ling.csv")
 write_csv(word_bank_marijuana, file = "./data/marijuana_bank_raw_ling.csv")
 ```
