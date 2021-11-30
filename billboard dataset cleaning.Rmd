@@ -96,3 +96,26 @@ write_csv(word_bank_other, file = "./data/other_illicit_bank_raw_ling.csv")
 write_csv(word_bank_marijuana, file = "./data/marijuana_bank_raw_ling.csv")
 ```
 
+Clean the manually classified music genre and alcohol word bank.
+```{r}
+
+genre_summary = read_csv(file = "./data/word_bank_genre_code_ling.csv",
+                         col_names = TRUE,
+                         na = " ") %>%
+  select(-...1) %>%
+  group_by(genre_cate) %>%
+  summarise(subgenre = list(value))
+
+write_csv(genre_summary, file = "./data/word_bank_genre_summary_ling.csv")
+
+alcohol_summary = read_csv(file = "./data/alcohol_bank_code_ling.csv",
+                           col_names = TRUE,
+                           na = "") %>%
+  select(-...1) %>%
+  filter(is.na(delete)) %>%
+  select(value)
+
+write_csv(alcohol_summary, file = "./data/word_bank_alcohol_summary_ling.csv")
+```
+
+
