@@ -1,0 +1,130 @@
+---
+title: "data-step1"
+author: "ShibeiXu & WenyiLiu"
+date: "2021/11/19"
+output:html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+#Loading library and theme setting
+library(haven)
+library(tidyverse)
+library(rvest)
+library(viridis)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,fig.width = 8, fig.height = 6,out.width = "90%")
+options(ggplot2.continuous.colour = "viridis",ggplot2.continuous.fill = "viridis")
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+## Load the dataset and check the dataset
+
+```{r}
+abuse=read_sas("abuse.sas7bdat")
+summary(abuse)
+```
+## Data wrangling
+
+```{r}
+abuse_1=abuse%>%
+select(pyear,agegrp,outcome,area,BSAE)%>%
+filter(outcome%in% c("COCYR", "IEMMON","MRJMON","SUMMON","INCIDENCE","BNGALC","RISKMJ"))%>%
+mutate(outcome=as.factor(outcome),
+       pyear=as.factor(pyear),
+       agegrp=as.factor(agegrp),
+       area=as.factor(area),
+       BSAE=as.numeric(BSAE))%>%
+pivot_wider(names_from = outcome,values_from = BSAE)%>%
+  unnest(cols = everything() )
+```
+
+## The trends in illicit drug use in the past month in different age and area group
+```{r}
+abuse_1%>%
+  group_by(pyear,agegrp,area)%>%
+  summarize(
+  mean_SUMMON = mean(SUMMON)
+)%>%
+  ggplot(aes(x = pyear, y = mean_SUMMON)) +
+  facet_grid(~area) +
+  geom_point(aes(color = agegrp), alpha = .5)
+```
+
+## The trends in alcohol use in different age and area group
+```{r}
+abuse_1%>%
+  group_by(pyear,agegrp,area)%>%
+  summarize(
+  mean_BNGALC = mean(BNGALC)
+)%>%
+  ggplot(aes(x = pyear, y = mean_BNGALC)) +
+  facet_grid(~area) +
+  geom_point(aes(color = agegrp), alpha = .5)
+```
+
+## The trends in Marijuana use in different age and area group
+```{r}
+abuse_1%>%
+  group_by(pyear,agegrp,area)%>%
+  summarize(
+  mean_MRJMON = mean(MRJMON)
+)%>%
+  ggplot(aes(x = pyear, y = mean_MRJMON)) +
+  facet_grid(~area) +
+  geom_point(aes(color = agegrp), alpha = .5)
+```
+
+##Trends of Marijuana used in last month, filter in area
+```{r}
+abuse_1%>%
+  group_by(pyear)%>% 
+  filter(area==1)%>% 
+  summarize( mean_MRJMON = mean(MRJMON), )%>% ggplot(aes(x = pyear, y = mean_MRJMON,group=1)) + geom_line()+geom_point()
+```
+
+##Trends of illicit drug use other than marijuana used in last month, filter in area
+```{r}
+abuse_1%>%
+  group_by(pyear)%>% 
+  filter(area==1)%>% 
+  summarize( mean_IEMMON= mean(IEMMON), )%>% ggplot(aes(x = pyear, y = mean_IEMMON,group=1)) + geom_line()+geom_point()
+```
+
+##Trends of average annual rate of first use of marijuana, filter in area
+```{r}
+abuse_1%>%
+  group_by(pyear)%>%
+  filter(area==1)%>%
+  summarize(
+  mean_INCIDENCE = mean(INCIDENCE),
+)%>%
+  ggplot(aes(x = pyear, y = mean_INCIDENCE,group=1)) + 
+  geom_line()+geom_point()
+```
+
+##Trends of perceptions of great risk from smoking marijuana once a month, filter in area
+```{r}
+ abuse_1%>%
+  group_by(pyear)%>%
+  filter(area==1)%>%
+  summarize(
+  mean_RISKMJ = mean(RISKMJ),
+)%>%
+  ggplot(aes(x = pyear, y = mean_RISKMJ,group=1)) + 
+  geom_line()+geom_point()
+```
+
+##Trends of alcohol, filter in area
+```{r}
+ abuse_1%>%
+  group_by(pyear)%>%
+  filter(area==1)%>%
+  summarize(
+  mean_BNGALC = mean(BNGALC),
+)%>%
+  ggplot(aes(x = pyear, y = mean_BNGALC,group=1)) + 
+  geom_line()+geom_point()
+```
