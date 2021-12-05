@@ -155,21 +155,23 @@ write_csv(alcohol_summary, file = "./data/word_bank_alcohol_summary_ling.csv")
 ```
 Load word banks
 ```{r}
-alcohol = read_lines("./data/words/alcohol.csv") %>%
-  paste(., collapse = "|")
-weed = read_lines("./data/words/marijuana.csv") %>%
-  paste(., collapse = "|")
-other = read_lines("./data/words/other_illicit.csv") %>%
-  paste(., collapse = "|")
+words_alcohol = read_lines("./data/words/alcohol.csv")
+regex_alcohol = paste(words_alcohol,collapse = " | ")
+
+words_marijuana = read_lines("./data/words/marijuana.csv")
+regex_marijuana = paste(words_marijuana,collapse = " | ")
+
+words_other = read_lines("./data/words/other_illicit.csv")
+regex_other = paste(words_other,collapse = " | ")
 ```
 Categorization
 ```{r}
 # individual song data
 billboard_1 = billboard %>%
   select(name, year, genre,lyrics) %>%
-  mutate(lyr_alcohol = as.numeric(grepl(alcohol,lyrics,ignore.case = TRUE)),
-         lyr_marijuana = as.numeric(grepl(weed, lyrics, ignore.case = TRUE)),
-         lyr_other = as.numeric(grepl(other, lyrics, ignore.case = TRUE)),
+  mutate(lyr_alcohol = as.numeric(grepl(regex_marijuana,lyrics,ignore.case = TRUE)),
+         lyr_marijuana = as.numeric(grepl(regex_alcohol,lyrics,ignore.case = TRUE)),
+         lyr_other = as.numeric(grepl(regex_other,lyrics,ignore.case = TRUE)),
          gen_country = as.numeric(grepl(country, genre, ignore.case = TRUE)),
          gen_hiphop = as.numeric(grepl(hiphop, genre, ignore.case = TRUE)),
          gen_rap = as.numeric(grepl(rap, genre, ignore.case = TRUE)),
