@@ -223,7 +223,7 @@ genly_billboard = billboard_1 %>%
          p_gen_ci = map(p_gen_res, pluck("conf.int")),
          p_gen_lci = min(unlist(p_gen_ci)),
          p_gen_uci = max(unlist(p_gen_ci)),
-         p_lyrgen_res = map2(.x = n_lyr_gen, .y = total, ~prop.test(.x, .y, conf.level = 0.95)),
+         p_lyrgen_res = map2(.x = n_lyr_gen, .y = n_gen, ~prop.test(.x, .y, conf.level = 0.95)),
          p_lyrgen = unlist(map(p_lyrgen_res, pluck("estimate"))),
          p_lyrgen_ci = map(p_lyrgen_res, pluck("conf.int")),
          p_lyrgen_lci = min(unlist(p_lyrgen_ci)),
