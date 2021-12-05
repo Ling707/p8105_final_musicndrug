@@ -1,0 +1,176 @@
+---
+title: "NSDUH analysis-ling"
+author: "Ling"
+date: "12/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#Loading library and theme setting
+library(haven)
+library(tidyverse)
+library(rvest)
+library(viridis)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,fig.width = 8, fig.height = 6,out.width = "90%")
+options(ggplot2.continuous.colour = "viridis",ggplot2.continuous.fill = "viridis")
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+Data
+```{r}
+abuse_df = read_sas(data_file = "./data/abuse.sas7bdat")
+abuse = abuse_df %>%
+  janitor::clean_names() %>%
+  select(pyear,agegrp,outcome,area,bsae, low_sae, up_sae, stname, state, pyearnm) %>%
+  filter(outcome %in% c("COCYR", "IEMMON","MRJMON","SUMMON","INCIDENCE","BNGALC","RISKMJ") & pyear != "11" & agegrp %in% c(1,2,3)) %>%
+  mutate(outcome = fct_recode(as_factor(outcome), "Cocaine use in the last year" = "COCYR",
+                                                  "Illicit drugs other than marijuana use in the last month" = "IEMMON",
+                                                  "Marijuana use in the past month" = "MRJMON",
+                                                  "Any illicit drug use in the last month" = "SUMMON",
+                                                  "Annual incidence of first use of marijuana" = "INCIDENCE",
+                                                  "Binge drinking in the last month" = "BNGALC",
+                                                  "Risk perception on smoking marijuana once a month" = "RISKMJ"),
+         pyearnm = substr(pyearnm, 1,9),
+         pyearnm = fct_reorder(as.factor(pyearnm), pyear),
+         agegrp = fct_recode(as_factor(agegrp), "12-18 y/o" = "1",
+                                                "18-25 y/o" = "2",
+                                                ">=26 y/o" = "3"),
+         area = as.factor(area),
+         stname = as.factor(stname),
+         bsae = 100 * bsae,
+         low_sae = 100 * low_sae,
+         up_sae = 100 * up_sae,
+         year = as.numeric(substr(pyearnm,1,4))) %>%
+  select(-pyear, -state)
+genly_billboard = read_csv("./data/genly_billboard.csv", col_names = TRUE)
+songs_abuse = read_csv("./data/songs_abuse.csv",col_names = TRUE)
+```
+
+Plots
+```{r plots}
+# illicit drug use
+# national trends
+abuse %>%
+    filter(area == 0 & agegrp != 3) %>%
+    ggplot(aes(x = pyearnm, y = bsae, color = agegrp)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = low_sae, ymax = up_sae), width = 0.5) +
+      facet_wrap(.~outcome) +
+      labs(title = "national summary: illicit drug use in >= 12 y/o") +
+      theme(axis.text.x = element_text(angle = 45))
+
+# region specific trends
+abuse %>%
+    filter(area == 1 ) %>%
+    ggplot(aes(x = pyearnm, y = bsae, color = agegrp)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = low_sae, ymax = up_sae), width = 0.5) +
+      facet_wrap(outcome~stname, ncol = 4) +
+      labs(title = "Northeast summary: illicit drug use in >= 12 y/o") +
+      theme(axis.text.x = element_text(angle = 45))
+
+# genre popularity
+
+genly_billboard %>%
+  filter(lyr_des == "alcohol") %>%
+  ggplot(aes(x = year, y = 100 * p_genre, color = gen_cate)) +
+    geom_point() +
+    geom_errorbar(aes(ymin = 100 * p_gen_lci, ymax = 100 * p_gen_uci), size = 0.3) +
+    labs(title = "genre popularity (%) from 1999 to 2019",
+         y = "genre(%)",
+         color = "genre")
+
+# substance description proportion
+genly_billboard %>%
+  filter(gen_cate == "rock") %>%
+  ggplot(aes(x = year, y = 100 * p_lyrics, color = lyr_des)) +
+    geom_point() +
+    geom_smooth(aes(group = lyr_des), se = F) +
+    geom_errorbar(aes(ymin = 100 * p_lyr_lci, ymax = 100 * p_lyr_uci), size = 0.3) +
+    labs(title = "substance description(%) from 1999 to 2019",
+         y = "substance mentioned(%)",
+         color = "substance")
+
+# genre and lyrics
+genly_billboard %>%
+  mutate(lyr_des = as_factor(lyr_des)) %>%
+  ggplot(aes(x = year, y = 100 * p_lyrgen, color = lyr_des)) +
+    geom_point() +
+    geom_smooth(aes(group = lyr_des), se = F) +
+    geom_errorbar(aes(ymin = 100 * p_lyrgen_lci, ymax = 100 * p_lyrgen_uci), size = 0.3) +
+    labs(title = "proportions of substances description (%) in lyrics from 1999 to 2019",
+         y = "description(%)",
+         color = "substance mentioned") +
+    facet_wrap(.~gen_cate)
+
+# lyrics and abuse
+# national, binge drinking
+songs_abuse %>%
+  filter(area == 0 & description == "alcohol" & outcome == "Binge drinking in the last month") %>%
+  ggplot(aes(x = year)) +
+    geom_point(aes(y = p_lyrics), color = "black") +
+    geom_errorbar(aes(ymin = p_lci, ymax = p_uci), color = "black") +
+    geom_smooth(aes(y = p_lyrics, group = 1), color = "black", se = F) +
+    geom_point(aes(y = bsae),color = "red") +
+    geom_errorbar(aes(ymin = low_sae, ymax = up_sae), color = "red") +
+    geom_smooth(aes(y = bsae, group = 1), color = "red", se = F) +
+    labs(title = "Lyrics alcohol description (black) and binge drinking in the last month (red)",
+         y = "%") +
+    facet_wrap(.~agegrp)
+
+songs_abuse %>%
+  filter(area == 0 & description == "marijuana" & outcome == "Annual incidence of first use of marijuana") %>%
+  ggplot(aes(x = year)) +
+    geom_point(aes(y = p_lyrics), color = "black") +
+    geom_errorbar(aes(ymin = p_lci, ymax = p_uci), color = "black") +
+    geom_smooth(aes(y = p_lyrics, group = 1), color = "black", se = F) +
+    geom_point(aes(y = bsae),color = "red") +
+    geom_errorbar(aes(ymin = low_sae, ymax = up_sae), color = "red") +
+    geom_smooth(aes(y = bsae, group = 1), color = "red", se = F) +
+    labs(title = "Lyrics marijuana description (black) and Annual incidence of first use of marijuana (red)",
+         y = "%") +
+    facet_wrap(.~agegrp)
+
+songs_abuse %>%
+  filter(area == 0 & description == "marijuana" & outcome == "Marijuana use in the past month") %>%
+  ggplot(aes(x = year)) +
+    geom_point(aes(y = p_lyrics), color = "black") +
+    geom_errorbar(aes(ymin = p_lci, ymax = p_uci), color = "black") +
+    geom_smooth(aes(y = p_lyrics, group = 1), color = "black", se = F) +
+    geom_point(aes(y = bsae),color = "red") +
+    geom_errorbar(aes(ymin = low_sae, ymax = up_sae), color = "red") +
+    geom_smooth(aes(y = bsae, group = 1), color = "red", se = F) +
+    labs(title = "Lyrics marijuana description (black) and Marijuana use in the past month (red)",
+         y = "%") +
+    facet_wrap(.~agegrp)
+
+songs_abuse %>%
+  filter(area == 0 & description == "marijuana" & outcome == "Risk perception on smoking marijuana once a month") %>%
+  ggplot(aes(x = year)) +
+    geom_point(aes(y = p_lyrics), color = "black") +
+    geom_errorbar(aes(ymin = p_lci, ymax = p_uci), color = "black") +
+    geom_smooth(aes(y = p_lyrics, group = 1), color = "black", se = F) +
+    geom_point(aes(y = bsae),color = "red") +
+    geom_errorbar(aes(ymin = low_sae, ymax = up_sae), color = "red") +
+    geom_smooth(aes(y = bsae, group = 1), color = "red", se = F) +
+    labs(title = "Lyrics marijuana description (black) and Risk perception on smoking marijuana once a month (red)",
+         y = "%") +
+    facet_wrap(.~agegrp)
+
+songs_abuse %>%
+  filter(area == 0 & description == "other_illicit" & outcome == "Illicit drugs other than marijuana use in the last month") %>%
+  ggplot(aes(x = year)) +
+    geom_point(aes(y = p_lyrics), color = "black") +
+    geom_errorbar(aes(ymin = p_lci, ymax = p_uci), color = "black") +
+    geom_smooth(aes(y = p_lyrics, group = 1), color = "black", se = F) +
+    geom_point(aes(y = bsae),color = "red") +
+    geom_errorbar(aes(ymin = low_sae, ymax = up_sae), color = "red") +
+    geom_smooth(aes(y = bsae, group = 1), color = "red", se = F) +
+    labs(title = "Lyrics marijuana description (black) and Illicit drugs other than marijuana use in the last month (red)",
+         y = "%") +
+    facet_wrap(.~agegrp)
+```
+
+
+
