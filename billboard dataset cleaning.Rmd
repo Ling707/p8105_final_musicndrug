@@ -25,10 +25,11 @@ unzip_result <- unzip("data/temp.zip", exdir = "./data", overwrite = TRUE)
 
 billboard = read_csv("./data/BillboardFromLast20/billboardHot100_1999-2019.csv") %>%
   janitor::clean_names() %>%
-  select(-c("date","features","weekly_rank","writing_credits")) %>%
+  select(week,name,genre,lyrics) %>%
   mutate(year = format(week, "%Y"),
          lyrics = str_to_lower(str_replace(lyrics, "\n"," ")),
-         genre = str_split(str_to_lower(genre), ','))
+         genre = str_to_lower(genre)) %>%
+  select(-week)
 
 word_bank_genre_raw = pull(billboard, genre) %>%
   unlist() %>%
@@ -99,14 +100,19 @@ write_csv(word_bank_marijuana, file = "./data/marijuana_bank_raw_ling.csv")
 Clean the manually classified music genre and alcohol word bank.
 ```{r}
 
-genre_summary = read_csv(file = "./data/word_bank_genre_code_ling.csv",
+genre = read_csv(file = "./data/word_bank_genre_code_ling.csv",
                          col_names = TRUE,
-                         na = " ") %>%
+                         na = "") %>%
   select(-...1) %>%
   group_by(genre_cate) %>%
-  summarise(subgenre = list(value))
+  summarise(subgenre = paste(value, collapse = "|")) %>%
+  drop_na(genre_cate)
 
-write_csv(genre_summary, file = "./data/word_bank_genre_summary_ling.csv")
+country = pull(subset(genre, genre_cate == "country"), subgenre)
+hiphop = pull(subset(genre, genre_cate == "hip-hop/r&;b"), subgenre)
+rap = pull(subset(genre, genre_cate == "rap"), subgenre)
+rock = pull(subset(genre, genre_cate == "rock"), subgenre)
+
 
 alcohol_summary = read_csv(file = "./data/alcohol_bank_code_ling.csv",
                            col_names = TRUE,
@@ -116,6 +122,30 @@ alcohol_summary = read_csv(file = "./data/alcohol_bank_code_ling.csv",
   select(value)
 
 write_csv(alcohol_summary, file = "./data/word_bank_alcohol_summary_ling.csv")
+```
+Load word banks
+```{r}
+alcohol = read_lines("./data/words/alcohol.csv") %>%
+  paste(., collapse = "|")
+weed = read_lines("./data/words/marijuana.csv") %>%
+  paste(., collapse = "|")
+other = read_lines("./data/words/other_illicit.csv") %>%
+  paste(., collapse = "|")
+```
+Categorization
+```{r}
+billboard_1 = billboard %>%
+  select(name, year, genre,lyrics) %>%
+  mutate(lyr_alcohol = as.numeric(grepl(alcohol,lyrics,ignore.case = TRUE)),
+         lyr_marijuana = as.numeric(grepl(weed, lyrics, ignore.case = TRUE)),
+         lyr_other = as.numeric(grepl(other, lyrics, ignore.case = TRUE)),
+         gen_country = as.numeric(grepl(country, genre, ignore.case = TRUE)),
+         gen_hiphop = as.numeric(grepl(hiphop, genre, ignore.case = TRUE)),
+         gen_rap = as.numeric(grepl(rap, genre, ignore.case = TRUE)),
+         gen_rock = as.numeric(grepl(rock, genre, ignore.case = TRUE))) %>%
+  select(-genre, -lyrics) 
+
+write_csv(billboard_1, file = "./data/billboard_classification.csv", col_names = TRUE)
 ```
 
 
