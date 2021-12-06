@@ -5,7 +5,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,dpi = 300)
 ```
 
 ```{r library}
@@ -57,8 +57,18 @@ write.csv(songs_per_year,"songs_per_year.csv")
 songs_per_year = read_csv("./data/songs_per_year.csv")
 
 songs_per_year = songs_per_year %>%
-  pivot_longer(cols = n_marijuana:n_other_illicit, names_prefix = "n_", names_to = "type")
-songs_per_year %>% ggplot(aes(x=year,y=value,group=type,color=type)) + geom_line() +geom_point()
+  pivot_longer(cols = n_marijuana:n_other_illicit, names_prefix = "n_", names_to = "type") %>%
+  mutate(frequency = value/total)
+songs_per_year %>% ggplot(aes(x=year,y=frequency,group=type,color=type)) + 
+  geom_line() + 
+  geom_point() +
+  theme_classic() + 
+  labs(
+    title = "Fraction of Songs Containing Drug Terms From 1999 to 2019",
+    x = "Year",
+    y = "Frequency",
+    color = "Drug type"
+  )
 ```
 
 
