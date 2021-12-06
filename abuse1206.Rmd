@@ -44,7 +44,7 @@ ggsave("./Plots/Marijuana use Vs % of marijuana lyric national level.pdf", width
 ```
 
 #Abuse recode
-
+##Mean illicit durg use other than marijuana (%)
 ```{r}
 songs_abuse%>%
   filter(outcome=="Illicit drugs other than marijuana use in the last month",area==0)%>%
@@ -53,7 +53,12 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Mean percentage of illicit durg other than marijuana in the past",
+         y = "Mean illicit durg use other than marijuana (%)",
+         color = "agegroup")
+
+ggsave("./Plots/Mean percentage of illicit durg other than marijuana in the past.pdf", width = 8, height = 5)
 ```
 
 ```{r}
