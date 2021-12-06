@@ -50,11 +50,22 @@ songs_per_year = group_by(billboard_data, year) %>%
     n_other_illicit = sum(other_illicit)
   )
 
+write.csv(songs_per_year,"songs_per_year.csv")
 ```
+
+```{r}
+songs_per_year = read_csv("./data/songs_per_year.csv")
+
+songs_per_year = songs_per_year %>%
+  pivot_longer(cols = n_marijuana:n_other_illicit, names_prefix = "n_", names_to = "type")
+songs_per_year %>% ggplot(aes(x=year,y=value,group=type,color=type)) + geom_line() +geom_point()
+```
+
 
 
 ```{r}
 ptn = "marijuana|airhead|ashes|baby bhang|baked|bammy|black mamba|blanket|blazed|blazer|blitzed|blown|blown out|blunt|blunted|bo-bo|bobo bush|bombay blue|bomber|bong|bong rat|boom|bowl|bread|broccoli|bubbler|bud|burned|caned|caramelyzed|cheeba|chronic|cripple|crossfaded|crunched|crunk|dagga|dankhead|dankrupt|ding|dinkie dow|dona juana|dona juanita|doob|doober|doobie|dope|doper|druggie|ent|faded|fake weed|fatty|flower power|flower tops|ganja|gasper|geeked|genie|giggle smoke|giggle weed|glass|good butt|good giggles|grass|gravity bong|green|hash|hash head|herb|herbalist|herbivore|high|high as a kite|hogger|hot stick|hurt|in like flint|jane|jay|joint|jolly green|jolly green giant|joy smoke|joy stick|k2|keyed|kieffer|krunked|mary jane|maryjane|mj|moon rocks|one-hitter|pax|percolator|piece|pipe|pot|pot-head|pothead|red|reefer|rig|ripped|roach|sketch|skunk|skunt|sloppy|smoke|smoked|smoker|spice|spiff|spliff|stoned|stoner|stonette|strunk|stuck|toker|trees|vape|water pipe|weed|weedhead|zohai|zoned"
+
 text = "Old Town Road Remix  Oh, oh-oh Oh Yeah, I'm gonna take my horse to the old town road I'm gonna ride til I can't no more I'm gonna take my horse to the old town road I'm gonna ride til I can't no more Kio, Kio I got the horses in the back Horse tack is attached Hat is matte black Got the boots that's black to match Riding on a horse, ha You can whip your Porsche I been in the valley You ain't been up off that porch, now Can't nobody tell me nothin' You can't tell me nothin' Can't nobody tell me nothin' You can't tell me nothin' Riding on a tractor Lean all in my bladder Cheated on my baby You can go and ask her My life is a movie Bull riding and boobies Cowboy hat from Gucci Wrangler on my booty Can't nobody tell me nothin' You can't tell me nothin' Can't nobody tell me nothin' You can't tell me nothin' Yeah, I'm gonna take my horse to the old town road I'm gonna ride til I can't no more I'm gonna take my horse to the old town road I'm gonna ride til I can't no more Hat down, cross town, living like a rockstar Spent a lot of money on my brand new guitar Baby's got a habit: diamond rings and Fendi sports bras Riding down Rodeo in my Maserati sports car Got no stress, I've been through all that I'm like a Marlboro Man so I kick on back Wish I could roll on back to that old town road I wanna ride til I can't no more Yeah, I'm gonna take my horse to the old town road I'm gonna ride til I can't no more I'm gonna take my horse to the old town road I'm gonna ride til I can't no more"
 grepl(ptn,text,ignore.case = TRUE)
 ```
