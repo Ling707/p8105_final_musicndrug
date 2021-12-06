@@ -1,0 +1,114 @@
+---
+title: "plotdraft"
+author: "ShibeiXu"
+date: "2021/12/5"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(haven)
+library(tidyverse)
+library(rvest)
+library(viridis)
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,fig.width = 8, fig.height = 6,out.width = "90%")
+options(ggplot2.continuous.colour = "viridis",ggplot2.continuous.fill = "viridis")
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+
+## R Markdown
+
+```{r}
+songs_abuse%>%
+  filter(stname=="National", outcome=="Marijuana use in the past month",description=="marijuana")%>%
+  group_by(year)%>%
+  ggplot(aes(x = p_lyrics, y = bsae, color = agegrp)) +
+    geom_point() +
+    geom_smooth(aes(group = agegrp), se = F) +
+   labs(title = "Marijuana use Vs % of marijuana lyric national level",
+         y = "Marijuana use in the past(%)",
+         color = "agegroup")
+
+```
+
+#Abuse recode
+
+```{r}
+songs_abuse%>%
+  filter(outcome=="Illicit drugs other than marijuana use in the last month",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+
+```{r}
+songs_abuse%>%
+  filter(outcome=="Binge drinking in the last month",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+```{r}
+songs_abuse%>%
+  filter(outcome=="Cocaine use in the last year",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+```{r}
+songs_abuse%>%
+  filter(outcome=="Annual incidence of first use of marijuana",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+```{r}
+songs_abuse%>%
+  filter(outcome=="Marijuana use in the past month",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+
+```{r}
+songs_abuse%>%
+  filter(outcome=="Risk perception on smoking marijuana once a month",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+
+```{r}
+songs_abuse%>%
+  filter(outcome=="Any illicit drug use in the last month",area==0)%>%
+  group_by(year,agegrp)%>%
+  summarize(
+  mean_bsae = mean(bsae)
+)%>%
+  ggplot(aes(x = year, y = mean_bsae)) +
+  geom_smooth(aes(color = agegrp), alpha = .5)
+```
+
