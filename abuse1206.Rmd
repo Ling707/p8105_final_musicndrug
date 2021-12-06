@@ -44,7 +44,7 @@ ggsave("./Plots/Marijuana use Vs % of marijuana lyric national level.pdf", width
 ```
 
 #Abuse recode
-##Mean illicit durg use other than marijuana (%)
+##Mean illicit durg use other than marijuana
 ```{r}
 songs_abuse%>%
   filter(outcome=="Illicit drugs other than marijuana use in the last month",area==0)%>%
@@ -54,14 +54,14 @@ songs_abuse%>%
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
   geom_smooth(aes(color = agegrp), alpha = .5)+
-  labs(title = "Mean percentage of illicit durg other than marijuana",
+  labs(title = "Mean percentage of illicit durg other than marijuana by age group",
          y = "Mean (%) in the past",
          color = "agegroup")
 
 ggsave("./Plots/Mean percentage of illicit durg other than marijuana in the past.pdf", width = 8, height = 5)
 ```
 
-##Mean binge drinking (%)
+##Mean binge drinking
 ```{r}
 songs_abuse%>%
   filter(outcome=="Binge drinking in the last month",area==0)%>%
@@ -71,7 +71,7 @@ songs_abuse%>%
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
   geom_smooth(aes(color = agegrp), alpha = .5)+
-  labs(title = "Mean percentage of binge drinking in the past",
+  labs(title = "Mean percentage of binge drinking in the past by age group",
          y = "Mean binge drinking (%) in the past",
          color = "agegroup")
 
@@ -95,6 +95,7 @@ songs_abuse%>%
 ggsave("./Plots/Mean percentage of Cocaine use in the past.pdf", width = 8, height = 5)
 ```
 
+##Annual incidence of first use of marijuana
 ```{r}
 songs_abuse%>%
   filter(outcome=="Annual incidence of first use of marijuana",area==0)%>%
@@ -103,9 +104,14 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Annual incidence of first use of marijuana by age group",
+         y = "Annual incidence of first use of marijuana (%) ",
+         color = "agegroup")
+ggsave("./Plots/Annual incidence of first use of marijuan.pdf", width = 8, height = 5)
 ```
 
+##Marijuana use in the past month
 ```{r}
 songs_abuse%>%
   filter(outcome=="Marijuana use in the past month",area==0)%>%
@@ -114,9 +120,15 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+    labs(title = "Mean perentage of Marijuana use by age group",
+         y = "Mean of Marijuana use (%) ",
+         color = "agegroup")
+
+ggsave("./Plots/Mean perentage of Marijuana use by age group.pdf", width = 8, height = 5)
 ```
 
+##Risk perception on smoking marijuana once a month
 ```{r}
 songs_abuse%>%
   filter(outcome=="Risk perception on smoking marijuana once a month",area==0)%>%
@@ -125,9 +137,15 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Risk perception on smoking marijuana by age group",
+         y = "Risk perception on smoking marijuana(%) ",
+         color = "agegroup")
+
+ggsave("./Plots/Risk perception on smoking marijuana.pdf", width = 8, height = 5)
 ```
 
+##Any illicit drug use
 ```{r}
 songs_abuse%>%
   filter(outcome=="Any illicit drug use in the last month",area==0)%>%
@@ -136,6 +154,11 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Mean perentage of any illicit drug use by age group",
+         y = "Mean of any illicit drug use (%) ",
+         color = "agegroup")
+
+ggsave("./Plots/Mean perentage of any illicit drug use by age group.pdf", width = 8, height = 5)
 ```
 
