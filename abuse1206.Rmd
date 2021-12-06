@@ -3,6 +3,8 @@ title: "plotdraft"
 author: "ShibeiXu"
 date: "2021/12/5"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -25,7 +27,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 songs_abuse=read.csv("./data/songs_abuse.csv")
 ```
 
-## Analysis part
+## Songs abuse plot part
 
 ```{r}
 songs_abuse%>%
@@ -38,6 +40,7 @@ songs_abuse%>%
          y = "Marijuana use in the past(%)",
          color = "agegroup")
 
+ggsave("./Plots/Marijuana use Vs % of marijuana lyric national level.pdf", width = 8, height = 5)
 ```
 
 #Abuse recode
