@@ -54,13 +54,14 @@ songs_abuse%>%
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
   geom_smooth(aes(color = agegrp), alpha = .5)+
-  labs(title = "Mean percentage of illicit durg other than marijuana in the past",
-         y = "Mean illicit durg use other than marijuana (%)",
+  labs(title = "Mean percentage of illicit durg other than marijuana",
+         y = "Mean (%) in the past",
          color = "agegroup")
 
 ggsave("./Plots/Mean percentage of illicit durg other than marijuana in the past.pdf", width = 8, height = 5)
 ```
 
+##Mean binge drinking (%)
 ```{r}
 songs_abuse%>%
   filter(outcome=="Binge drinking in the last month",area==0)%>%
@@ -69,8 +70,15 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Mean percentage of binge drinking in the past",
+         y = "Mean binge drinking (%) in the past",
+         color = "agegroup")
+
+ggsave("./Plots/Mean percentage of binge drinking in the past.pdf", width = 8, height = 5)
 ```
+
+##Cocaine use (%)
 ```{r}
 songs_abuse%>%
   filter(outcome=="Cocaine use in the last year",area==0)%>%
@@ -79,8 +87,14 @@ songs_abuse%>%
   mean_bsae = mean(bsae)
 )%>%
   ggplot(aes(x = year, y = mean_bsae)) +
-  geom_smooth(aes(color = agegrp), alpha = .5)
+  geom_smooth(aes(color = agegrp), alpha = .5)+
+  labs(title = "Mean percentage of cocaine use by age group",
+         y = "Mean cocaine use (%) ",
+         color = "agegroup")
+
+ggsave("./Plots/Mean percentage of Cocaine use in the past.pdf", width = 8, height = 5)
 ```
+
 ```{r}
 songs_abuse%>%
   filter(outcome=="Annual incidence of first use of marijuana",area==0)%>%
@@ -91,6 +105,7 @@ songs_abuse%>%
   ggplot(aes(x = year, y = mean_bsae)) +
   geom_smooth(aes(color = agegrp), alpha = .5)
 ```
+
 ```{r}
 songs_abuse%>%
   filter(outcome=="Marijuana use in the past month",area==0)%>%
