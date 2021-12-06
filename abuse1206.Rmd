@@ -19,9 +19,13 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
+#Data import
 
+```{r}
+songs_abuse=read.csv("./data/songs_abuse.csv")
+```
 
-## R Markdown
+## Analysis part
 
 ```{r}
 songs_abuse%>%
