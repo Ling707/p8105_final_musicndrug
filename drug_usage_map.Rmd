@@ -1,0 +1,77 @@
+---
+title: "Drug Usage Map"
+author: "Mingkuan Xu (mx2262)"
+date: "12/6/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library}
+library(tidyverse)
+```
+
+
+```{r}
+abuse_state_data = read_csv("data/songs_abuse.csv") %>%
+  filter(area==2) %>%
+  select(year,description,bsae,stname,agegrp,outcome) %>%
+  mutate(stname = tolower(stname)) %>%
+  filter((description=="marijuana" & 
+            outcome == "Marijuana use in the past month")|
+           (description=="alcohol" & 
+              outcome == "Binge drinking in the last month")|
+           (description=="other_illicit" & 
+              outcome == "Any illicit drug use in the last month")) %>%
+  mutate(agegrp = ifelse(agegrp == ">=26 y/o","26+ y/o",agegrp))
+
+abuse_1999_marijuana = abuse_state_data %>%
+  filter(year==1999,
+         description=="marijuana",
+         agegrp=="12-18 y/o",
+         outcome=="Marijuana use in the past month")
+
+abuse_1999_marijuana = abuse_state_data %>%
+  filter(year==1999,
+         stname=="texas",
+         agegrp=="12-18 y/o")
+
+```
+```{r}
+abuse_by_year_data = abuse_state_data %>%
+  filter(stname==tolower("Alabama")) %>%
+  filter(description=="marijuana") 
+    #plot_ly(x = ~year, y = ~bsae, color = ~description, type = "scatter", mode = "lines",
+    #      colors = "Set2") 
+    abuse_by_year_data %>% 
+      ggplot(aes(x=year,y=bsae,group=agegrp,color=agegrp)) + 
+      geom_point() + geom_line() + theme_bw()
+```
+
+```{r}
+us_states <- map_data("state")
+
+states_1999_marijuana = left_join(us_states,abuse_1999_marijuana,by=c("region"="stname"))
+p = ggplot(data = states_1999_marijuana,
+            mapping = aes(x = long, y = lat, group = group, fill = bsae)) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  geom_polygon(color = "gray50", size = 0.1) +
+#  guides(fill = "none") +
+  scale_fill_continuous(type = "viridis") +
+  theme(axis.line=element_blank(),
+        axis.text=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title=element_blank(),
+        panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid=element_blank()) + 
+  labs(
+    title = paste("Abuse of ","by state"),
+      colour="bsae") + 
+  scale_color_gradientn(colours = rainbow(2), limits=c(0,50))
+
+p
+
+```
